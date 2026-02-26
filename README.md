@@ -2,7 +2,7 @@
 
 # bagooon/chatease-php-client
 
-[![CI](https://github.com/yourname/chatease-php-client/actions/workflows/php-ci.yml/badge.svg)](...)
+[![CI](https://github.com/bagooon/chatease-php-client/actions/workflows/php-ci.yml/badge.svg)](...)
 [![Latest Version](https://img.shields.io/packagist/v/bagooon/chatease-php-client.svg)](...)
 [![PHP Version](https://img.shields.io/packagist/php-v/bagooon/chatease-php-client.svg)](...)
 
