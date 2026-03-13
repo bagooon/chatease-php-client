@@ -38,6 +38,7 @@ final class ChatEaseClientTest extends TestCase
                 'email' => 'taro@example.com',
             ],
             'boardUniqueKey' => '20260225-0001',
+            'memo' => '初回問い合わせ。優先度高め。',
         ]);
 
         $this->assertSame($fakeResponse['slug'], $result['slug']);
@@ -49,6 +50,7 @@ final class ChatEaseClientTest extends TestCase
 
         // body に workspaceSlug が入っているか
         $this->assertSame('test-workspace', $client->lastBody['workspaceSlug'] ?? null);
+        $this->assertSame('初回問い合わせ。優先度高め。', $client->lastBody['memo'] ?? null);
     }
 
     public function testCreateBoardWithStatusRequiresValidDate(): void
