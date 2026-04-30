@@ -78,6 +78,27 @@ final class ChatEaseClientTest extends TestCase
         ]);
     }
 
+    public function testCreateBoardAllowsGuestPassphrase(): void
+    {
+        $client = $this->createTestClient([
+            'slug'     => 'slug',
+            'hostURL'  => 'host',
+            'guestURL' => 'guest',
+        ]);
+
+        $client->createBoard([
+            'title' => 'passphrase board',
+            'guest' => [
+                'name'  => 'Taro',
+                'email' => 'taro@example.com',
+            ],
+            'boardUniqueKey' => '20260225-0001-pass',
+            'guestPassphrase' => 'あいことば',
+        ]);
+
+        $this->assertSame('あいことば', $client->lastBody['guestPassphrase'] ?? null);
+    }
+
     public function testCreateBoardRejectsInvalidEmail(): void
     {
         $client = $this->createTestClient([
@@ -117,6 +138,28 @@ final class ChatEaseClientTest extends TestCase
                 'email' => 'taro@example.com',
             ],
             'boardUniqueKey' => 'has space', // 空白入り
+        ]);
+    }
+
+    public function testCreateBoardRejectsTooLongGuestPassphrase(): void
+    {
+        $client = $this->createTestClient([
+            'slug'     => 'slug',
+            'hostURL'  => 'host',
+            'guestURL' => 'guest',
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('guestPassphrase is too long');
+
+        $client->createBoard([
+            'title' => 'invalid passphrase',
+            'guest' => [
+                'name'  => 'Taro',
+                'email' => 'taro@example.com',
+            ],
+            'boardUniqueKey' => '20260225-0005',
+            'guestPassphrase' => 'あいうえおかきくけこさ',
         ]);
     }
 

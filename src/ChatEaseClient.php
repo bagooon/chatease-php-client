@@ -117,6 +117,7 @@ class ChatEaseClient
      *   title: string,
      *   guest: array{name: string, email: string},
      *   boardUniqueKey: string,
+     *   guestPassphrase?: string,
      *   memo?: string,
      *   inReplyTo?: string
      * } $params
@@ -135,6 +136,7 @@ class ChatEaseClient
      *   title: string,
      *   guest: array{name: string, email: string},
      *   boardUniqueKey: string,
+     *   guestPassphrase?: string,
      *   memo?: string,
      *   inReplyTo?: string,
      *   initialStatus: array{
@@ -157,6 +159,7 @@ class ChatEaseClient
      *   title: string,
      *   guest: array{name: string, email: string},
      *   boardUniqueKey: string,
+     *   guestPassphrase?: string,
      *   memo?: string,
      *   inReplyTo?: string,
      *   initialStatus: array{
@@ -229,6 +232,17 @@ class ChatEaseClient
             throw new InvalidArgumentException(
                 'boardUniqueKey is invalid. It must be a non-empty string without whitespace and <= 255 chars.'
             );
+        }
+
+        if (array_key_exists('guestPassphrase', $params) && $params['guestPassphrase'] !== null) {
+            if (!is_string($params['guestPassphrase'])) {
+                throw new InvalidArgumentException('guestPassphrase must be string');
+            }
+            if ($this->getGuestPassphraseWeightedLength(trim($params['guestPassphrase'])) > 20) {
+                throw new InvalidArgumentException(
+                    'guestPassphrase is too long. It must be within 10 full-width characters.'
+                );
+            }
         }
 
         // initialStatus があれば検証
@@ -323,6 +337,21 @@ class ChatEaseClient
         }
 
         return true;
+    }
+
+    private function getGuestPassphraseWeightedLength(string $value): int
+    {
+        $length = 0;
+        $chars = preg_split('//u', $value, -1, PREG_SPLIT_NO_EMPTY);
+        if ($chars === false) {
+            return 999;
+        }
+
+        foreach ($chars as $char) {
+            $length += preg_match('/^[\x{0000}-\x{00FF}]$/u', $char) === 1 ? 1 : 2;
+        }
+
+        return $length;
     }
 
     /**
